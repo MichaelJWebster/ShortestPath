@@ -15,11 +15,11 @@ class GraphNode(object):
         self.mVisited = False
         self.mCost = sys.float_info.max
 
-    def setVisited(self, fromNode, parentCost, childCost):
+    def setVisited(self):
         self.mVisited = True
-        self.mPrev = fromNode
-        self.mCost = childCost + parentCost
-        
+
+    #def setTentativeCost(self, parentCost, childCost):
+    #    self.mCost = childCost + parentCost
 
     def isVisited(self):
         return self.mVisited
@@ -27,8 +27,9 @@ class GraphNode(object):
     def getPrev(self):
         return self.mPrev
 
-    def setCost(self, cost):
+    def setCost(self, cost, fromNode):
         self.mCost = cost
+        self.mPrev = fromNode        
         
     def cost(self):
         return self.mCost
