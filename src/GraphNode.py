@@ -17,19 +17,19 @@ class GraphNode(object):
 
     def setVisited(self):
         self.mVisited = True
-
-    #def setTentativeCost(self, parentCost, childCost):
-    #    self.mCost = childCost + parentCost
-
+        
     def isVisited(self):
         return self.mVisited
+
+    def setTentative(self, fromNode, newCost):
+        self.mPrev = fromNode
+        self.mCost = newCost
 
     def getPrev(self):
         return self.mPrev
 
-    def setCost(self, cost, fromNode):
+    def setCost(self, cost):
         self.mCost = cost
-        self.mPrev = fromNode        
         
     def cost(self):
         return self.mCost
