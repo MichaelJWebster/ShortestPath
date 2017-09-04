@@ -1,6 +1,52 @@
 #+OPTIONS: ^:nil
-
 * Find the shortest path with the greatest skill level between two users
+
+** Task
+
+The task is motivated by wanting to find the shortest path from a coder to
+another coder in a social network graph. The path should be the shortest
+possible, but consist of the strongest coders possible.
+
+Each coder has a skill level, and to make the task look like a
+minimisation/shortest path problem, the skill level is inverted to find a
+weighting for edges between two coders in the graph.
+
+The shortest path is the one where the sum of the weights (inverted skill
+levels), on edges, is a minimum.
+
+NOTE: The value 2 is arbitrarily chosen for links to coders with skill level
+0.
+
+** Algorithm
+
+Setup:
+#+BEGIN_EXAMPLE
+1. Set the start node's cost to 0
+2. Set all other node's costs to some Maximum value (infinite)
+3. Insert the start node onto an ordered (initially empty) list nList
+4. Run the findShortest algorithm
+#+END_EXAMPLE
+
+The findShortest algorithm is:
+
+#+BEGIN_EXAMPLE
+    while targetNode hasn't been visited:
+        if nList is empty - we can't find a path
+        pop the first element of nList into curNode
+        for each node f in the friends list of curNode:
+             if f has not been visited, set it's tentative cost if required:
+                 if f.skill != 0
+                    tentativeCost = curNode.cost + 1 / f.skill
+                 else:
+                     tentativeCost = curNode.cost + 2 (or chosen value.)
+                 if tentativeCost < f.tentativeCost:
+                     f.tentativeCost = curNode.cost + 2 (or chosen value.)
+                     insert f in order into nList
+#+END_EXAMPLE
+
+NOTE: An addition to the above algorithm, we record the path by setting a
+prev link from destination to source, between each f and curNode whenever we
+reduce f's tentativeCost.
 
 ** Example
 #+Name: fig:Example1
@@ -9,13 +55,10 @@
 
 digraph G {
 rankdir="LR";
-
 edge [weight=2];
-
-node [shape=circle,style=filled,fixedsize=true, width=0.5,height=0.5,fontsize=11, color=gray];
-
+node [shape=circle,style=filled,fixedsize=true, width=0.8,height=0.8,fontsize=11, color=gray];
 "1" [color=red];
-"6" [color=blue];
+"6" [color=dodgerblue];
 "2" [color=gray];
 "3" [color=gray];
 "4" [color=gray];
@@ -36,6 +79,228 @@ node [shape=circle,style=filled,fixedsize=true, width=0.5,height=0.5,fontsize=11
 #+LABEL: fig:Example1
 #+RESULTS: fig:Example1
 
+Given we want to find the shortest path with the above criteria between coder 1
+and coder 6, we start at 1.
+
+Initialise the graph with all costs = some max value, except 1, which has a cost of
+zero:
+
+#+Name: fig:Example1.1
+# -*- find-file-hook: org-babel-execute-buffer -*-
+#+BEGIN_SRC dot :file example1.1.png :cmdline -Kdot -Tpng
+
+digraph G {
+rankdir="LR";
+edge [weight=2];
+node [shape=circle,style=filled,fixedsize=true, width=0.8,height=0.8,fontsize=11, color=gray];
+"1" [color=red, label=<1<BR/><I>W=0</I>>];
+"6" [color=dodgerblue, label=<6<BR/><B>W=MAX</B>>];
+"2" [color=gray, label=<2<BR/><B>W=MAX</B>>];
+"3" [color=gray, label=<3<BR/><B>W=MAX</B>>];
+"4" [color=gray, label=<4<BR/><B>W=MAX</B>>];
+"5" [color=gray, label=<5<BR/><B>W=MAX</B>>];
+"1" -> "2" [label="2"];
+"1" -> "3" [label="4"];
+"2" -> "3" [label="4"];
+"2" -> "4" [label="6"];
+"2" -> "5" [label="2"];
+"3" -> "5" [label="2"];
+"4" -> "6" [label="2"];
+"5" -> "4" [label="6"];
+"5" -> "6" [label="2"];
+}
+
+#+END_SRC
+#+CAPTION: Example1.1
+#+LABEL: fig:Example1.1
+#+RESULTS: fig:Example1.1
+
+At this point, we push node 1 onto nList, mark it visited, and start with the
+findShortestPath Algorithm.
+
+The algorithm pop's node1, and updates both of it's friends with tentative costs,
+$\frac{1}{4}$ for node 3, and $\frac{1}{2}$ for node 2. After the inner for loop
+completes, nList should contain node 3 and node 2 in that order.
+
+The graph is now like this:
+
+#+Name: fig:Example1.2
+# -*- find-file-hook: org-babel-execute-buffer -*-
+#+BEGIN_SRC dot :file example1.2.png :cmdline -Kdot -Tpng
+
+digraph G {
+rankdir="LR";
+edge [weight=2];
+node [shape=circle,style=filled,fixedsize=true, width=0.8,height=0.8,fontsize=11, color=gray];
+"1" [color=green, label=<1<BR/><I>W=0</I>>];
+"6" [color=dodgerblue, label=<6<BR/><B>W=MAX</B>>];
+"2" [color=aquamarine, label=<2<BR/><B>W=1/2</B>>];
+"3" [color=aquamarine, label=<3<BR/><B>W=1/4</B>>];
+"4" [color=gray, label=<4<BR/><B>W=MAX</B>>];
+"5" [color=gray, label=<5<BR/><B>W=MAX</B>>];
+"1" -> "2" [label="2"];
+"1" -> "3" [label="4"];
+"2" -> "3" [label="4"];
+"2" -> "4" [label="6"];
+"2" -> "5" [label="2"];
+"3" -> "5" [label="2"];
+"4" -> "6" [label="2"];
+"5" -> "4" [label="6"];
+"5" -> "6" [label="2"];
+}
+
+#+END_SRC
+#+CAPTION: Example1.2
+#+LABEL: fig:Example1.2
+#+RESULTS: fig:Example1.2
+
+The first node in nList is now node 3 with weight $\frac{1}{4}$, so we process that
+node in the same way, and end up with the following graph:
+
+#+Name: fig:Example1.3
+# -*- find-file-hook: org-babel-execute-buffer -*-
+#+BEGIN_SRC dot :file example1.3.png :cmdline -Kdot -Tpng
+
+digraph G {
+rankdir="LR";
+edge [weight=2];
+node [shape=circle,style=filled,fixedsize=true, width=0.8,height=0.8,fontsize=11, color=gray];
+"1" [color=green, label=<1<BR/><I>W=0</I>>];
+"6" [color=dodgerblue, label=<6<BR/><B>W=MAX</B>>];
+"2" [color=aquamarine, label=<2<BR/><B>W=1/2</B>>];
+"3" [color=green, label=<3<BR/><B>W=1/4</B>>];
+"4" [color=gray, label=<4<BR/><B>W=MAX</B>>];
+"5" [color=aquamarine, label=<5<BR/><B>W=3/4</B>>];
+"1" -> "2" [label="2"];
+"1" -> "3" [label="4"];
+"2" -> "3" [label="4"];
+"2" -> "4" [label="6"];
+"2" -> "5" [label="2"];
+"3" -> "5" [label="2"];
+"4" -> "6" [label="2"];
+"5" -> "4" [label="6"];
+"5" -> "6" [label="2"];
+}
+
+#+END_SRC
+#+CAPTION: Example1.3
+#+LABEL: fig:Example1.3
+#+RESULTS: fig:Example1.3
+
+Once again, nList has the inorder list of nodes, ie. node 2 then node 5, so the
+next iteration processes Node 2, and we end up with the graph:
+
+#+Name: fig:Example1.4
+# -*- find-file-hook: org-babel-execute-buffer -*-
+#+BEGIN_SRC dot :file example1.4.png :cmdline -Kdot -Tpng
+
+digraph G {
+rankdir="LR";
+edge [weight=2];
+node [shape=circle,style=filled,fixedsize=true, width=0.8,height=0.8,fontsize=11, color=gray];
+"1" [color=green, label=<1<BR/><I>W=0</I>>];
+"6" [color=dodgerblue, label=<6<BR/><B>W=MAX</B>>];
+"2" [color=green, label=<2<BR/><B>W=1/2</B>>];
+"3" [color=green, label=<3<BR/><B>W=1/4</B>>];
+"4" [color=aquamarine, label=<4<BR/><B>W=2/3</B>>];
+"5" [color=aquamarine, label=<5<BR/><B>W=3/4</B>>];
+"1" -> "2" [label="2"];
+"1" -> "3" [label="4"];
+"2" -> "3" [label="4"];
+"2" -> "4" [label="6"];
+"2" -> "5" [label="2"];
+"3" -> "5" [label="2"];
+"4" -> "6" [label="2"];
+"5" -> "4" [label="6"];
+"5" -> "6" [label="2"];
+}
+
+#+END_SRC
+#+CAPTION: Example1.4
+#+LABEL: fig:Example1.4
+#+RESULTS: fig:Example1.4
+
+Since $\frac{2}{3} < \frac{3}{4}$, the first node in nList is now node 4,
+followed by node 5. We pop node4 from nList, and process it to produce:
+
+#+Name: fig:Example1.5
+# -*- find-file-hook: org-babel-execute-buffer -*-
+#+BEGIN_SRC dot :file example1.5.png :cmdline -Kdot -Tpng
+
+digraph G {
+rankdir="LR";
+edge [weight=2];
+node [shape=circle,style=filled,fixedsize=true, width=0.8,height=0.8,fontsize=11, color=gray];
+"1" [color=green, label=<1<BR/><I>W=0</I>>];
+"6" [color=aquamarine, label=<6<BR/><B>7/6</B>>];
+"2" [color=green, label=<2<BR/><B>W=1/2</B>>];
+"3" [color=green, label=<3<BR/><B>W=1/4</B>>];
+"4" [color=green, label=<4<BR/><B>W=2/3</B>>];
+"5" [color=aquamarine, label=<5<BR/><B>W=3/4</B>>];
+"1" -> "2" [label="2"];
+"1" -> "3" [label="4"];
+"2" -> "3" [label="4"];
+"2" -> "4" [label="6"];
+"2" -> "5" [label="2"];
+"3" -> "5" [label="2"];
+"4" -> "6" [label="2"];
+"5" -> "4" [label="6"];
+"5" -> "6" [label="2"];
+}
+
+#+END_SRC
+#+CAPTION: Example1.5
+#+LABEL: fig:Example1.5
+#+RESULTS: fig:Example1.5
+
+At this point, nList contains node 5 followed by node 6, so node 5 is processed.
+NOTE: In this case, neither of the friends of node 5 are updated because the cost
+at node 5 + the weights to each of the nodes from node 5, are greater than their
+currently assigned costs, so the graph now looks unchanged except node 5 has
+changed colour to green to indicate it's been visited:
+
+
+#+Name: fig:Example1.6
+# -*- find-file-hook: org-babel-execute-buffer -*-
+#+BEGIN_SRC dot :file example1.6.png :cmdline -Kdot -Tpng
+
+digraph G {
+rankdir="LR";
+edge [weight=2];
+node [shape=circle,style=filled,fixedsize=true, width=0.8,height=0.8,fontsize=11, color=gray];
+"1" [color=green, label=<1<BR/><I>W=0</I>>];
+"6" [color=aquamarine, label=<6<BR/><B>7/6</B>>];
+"2" [color=green, label=<2<BR/><B>W=1/2</B>>];
+"3" [color=green, label=<3<BR/><B>W=1/4</B>>];
+"4" [color=green, label=<4<BR/><B>W=2/3</B>>];
+"5" [color=green, label=<5<BR/><B>W=3/4</B>>];
+"1" -> "2" [label="2"];
+"1" -> "3" [label="4"];
+"2" -> "3" [label="4"];
+"2" -> "4" [label="6"];
+"2" -> "5" [label="2"];
+"3" -> "5" [label="2"];
+"4" -> "6" [label="2"];
+"5" -> "4" [label="6"];
+"5" -> "6" [label="2"];
+}
+
+#+END_SRC
+#+CAPTION: Example1.6
+#+LABEL: fig:Example1.6
+#+RESULTS: fig:Example1.6
+
+Finally, there is only one node left in nList, and we visit that node 6, which terminates
+the algorithm.
+
+So our shortest path is:
+
+#+BEGIN_EXAMPLE
+1 -> 2 -> 4 -> 6
+#+END_EXAMPLE
+
+This path has a length $\frac{1}{2} + \frac{1}{6} + \frac{1}{2} = \frac{7}{6}$
+
 *** The Json file
 
 #+BEGIN_EXAMPLE
@@ -47,10 +312,7 @@ node [shape=circle,style=filled,fixedsize=true, width=0.5,height=0.5,fontsize=11
 {"user" : 6, "friends" : [], "skill" : 2}
 #+END_EXAMPLE
 
-The shortest path according to the algorithm where skill inverted is used as
-a weight, is:
 
-#+BEGIN_EXAMPLE
-1 -> 2 -> 4 -> 6
-#+END_EXAMPLE
+
+
 
