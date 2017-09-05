@@ -4,7 +4,7 @@ This repository contains code, documentation and some tests for the Data61
 shortest path task.
 
 The directory contents are:
-'''bash
+```bash
 .
 ./data
 ./data/task.json.gz
@@ -27,7 +27,7 @@ The directory contents are:
 ./test/data/testExample.json
 ./test/data/testSGraph.json
 ./test/spTest.py
-'''bash
+```bash
 
 ## src
 
