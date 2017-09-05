@@ -3,6 +3,9 @@ import math
 from SocialGraph import SocialGraph
 
 class ShortestPath(object):
+    """
+    Implements a version of the shortest path algorithm.
+    """
     mSocialGraph = None
     mNextShortest = None
     mSrcUser = None
@@ -21,6 +24,13 @@ class ShortestPath(object):
         self.mZeroVal = float(zeroVal)
 
     def unwindShortest(self, start, finish):
+        """
+        Create a path from a sequence of prev links from finish to start.
+
+        Args:
+        start    The start node of the path to be found
+        finish   The end node of the path to be found.
+        """
         sPath = list()
         curUser = finish
         while curUser != start:
@@ -30,8 +40,18 @@ class ShortestPath(object):
         return sPath
 
     def findShortestPath(self, start, finish):
+        """
+        Return the shortest path between start and finish, by searching the
+        mSocialGraph using a Dkikstra style algorithm.
+
+        Args:
+        start    The start node of the path to be found
+        finish   The end node of the path to be found.
+
+        Returns:
+        A list containing the shortest path, or None if no path exists.
+        """
         if start == self.mSrcUser and self.mSocialGraph.getUser(finish).isVisited():
-            print("Just returning already found path.")
             return self.unwindShortest(start, finish)
             
         self.mSocialGraph.resetGraph()
@@ -49,6 +69,9 @@ class ShortestPath(object):
 
 
     def getShortest(self):
+        """
+        The main part of the shortest path algorithm.
+        """
         while not self.mSocialGraph.getUser(self.mTargetUser).isVisited():
             if len(self.mNextShortest) == 0:
                 return False
@@ -70,6 +93,12 @@ class ShortestPath(object):
         return True
 
     def insertNextInOrder(self, gNode):
+        """
+        Insert gNode in self.mNextShortest in (ascending) order by cost.
+
+        Args:
+        gNode   A GraphNode to be inserted.
+        """
         if len(self.mNextShortest) == 0:
             self.mNextShortest.append(gNode)
             return
@@ -84,6 +113,16 @@ class ShortestPath(object):
         self.mNextShortest.insert(start, gNode)
 
     def getSkill(self, node):
+        """
+        Return the skill weight for node as the inverse of it's skill level,
+        or self.mZero if node's skill is 0.
+
+        Args:
+        node    The node we want a skill weight from.
+
+        Returns:
+        The integer value we're going to use as a weight on edges to node.
+        """
         skillVal = float(node.getSkill())
         skillWeight = None
         if skillVal == 0:
@@ -91,27 +130,6 @@ class ShortestPath(object):
         else:
             skillWeight = 1 / skillVal
         return skillWeight
-
-if __name__ == "__main__":
-    fname = "../data/task.json"
-    s = 1
-    e = 7271
-    # fname = "../data/test1.json"
-    # s = 3
-    # e = 2
-    # fname = "../data/test2.json"
-    # s = 1
-    # e = 6    
-    sp = ShortestPath(fname)
-    p = sp.findShortestPath(s, e)
-    print("Shortest Path is: %s\n" % p)    
-    # e = 8
-    # p = sp.findShortestPath(s, e)
-    # print("Shortest Path is: %s\n" % p)
-    # e = 4
-    # p = sp.findShortestPath(s, e)
-    # print("Shortest Path is: %s\n" % p)    
-
 
 
 

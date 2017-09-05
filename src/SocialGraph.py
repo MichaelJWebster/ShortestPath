@@ -38,15 +38,6 @@ class SocialGraph(object):
         for node in self.gDict.values():
             node.reset()
 
-if __name__ == "__main__":
-    fname = "../data/task.json"
-    graph = SocialGraph.createGraph(fname)
-    user = graph.getUser(1029419)
-    print("User is %d => %s" % (1029419, user))
-    l = graph.getIdList()
-    print("100 Entries = %s\n" % l[:100])
-
-
         
 
         

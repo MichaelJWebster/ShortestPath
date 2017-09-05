@@ -14,8 +14,7 @@ weighting for edges between two coders in the graph.
 The shortest path is the one where the sum of the weights (inverted skill
 levels), on edges, is a minimum.
 
-NOTE: The value 2 is arbitrarily chosen for links to coders with skill level
-0.
+NOTE: The value 2 is arbitrarily chosen for links to coders with skill level=0.
 
 ** Algorithm
 

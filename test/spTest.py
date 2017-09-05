@@ -3,13 +3,29 @@ import json
 import os
 import os.path
 import sys
+import operator
 testdir = os.path.dirname(__file__)
 srcdir = '../src'
 sys.path.insert(0, os.path.abspath(os.path.join(testdir, srcdir)))
 from GraphNode import GraphNode
 from SocialGraph import SocialGraph
+from ShortestPath import ShortestPath
 
 
+class shortestPathTest(unittest.TestCase):
+    sp = None
+    def setUp(self):
+        exampleTest = os.path.join(testdir, "data", "testExample.json")
+        self.sp = ShortestPath(exampleTest)
+
+    def test_shortest(self):
+        expected = [1, 2, 4, 6]
+        actual = self.sp.findShortestPath(1, 6)
+        succeeded = set(list(map(operator.eq, expected, actual)))
+        self.assertEqual(len(succeeded), 1, "A path element didn't match.")
+        self.assertTrue(succeeded.pop())
+
+    
 class SocialGraphTest(unittest.TestCase):
     mGraph = None
     mJsonDict = None

@@ -6,7 +6,6 @@ class GraphNode(object):
     mCost = sys.float_info.max
     mContents = None
     mPrev = None
-    
 
     def __init__(self, jsonDict):
         self.mContents = jsonDict
