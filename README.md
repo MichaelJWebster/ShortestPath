@@ -27,7 +27,7 @@ The directory contents are:
 ./test/data/testExample.json
 ./test/data/testSGraph.json
 ./test/spTest.py
-```bash
+```
 
 ## src
 
