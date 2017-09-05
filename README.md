@@ -49,12 +49,14 @@ The test directory contains the python unittests.
 
 The tests are in the test/spTest.py file, and can be run as follows:
 
+```bash
 bash-3.2$ python3 test/spTest.py 
 ...
 ----------------------------------------------------------------------
 Ran 3 tests in 0.001s
 
 OK
+```
 
 ## Running the code
 
@@ -64,6 +66,7 @@ then repeatedly asks for start and end nodes. Ctrl-D ends it.
 
 It can be run as follows:
 
+```
 bash-3.2$ python3 run.py -f data/test2.json 
 
 Please enter source and dest nodes separated by a space: 1 6
@@ -75,6 +78,6 @@ Path from 3 to 6 == [3, 5, 6]
 
 
 Please enter source and dest nodes separated by a space: Finished.
-
+```
 
 
